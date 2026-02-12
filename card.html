@@ -3,162 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        :root {
-            --bg-color: #f4f4f9;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --accent-color: #007bff;
-            --button-bg: #e0e0e0;
-        }
-
-        [data-theme="dark"] {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --text-color: #ffffff;
-            --accent-color: #bb86fc;
-            --button-bg: #333333;
-        }
-
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            transition: background-color 0.3s ease;
-        }
-
-        /* Top Right Controls */
-        .controls {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            gap: 15px;
-            z-index: 10;
-        }
-
-        /* NEW: Top Left Stats */
-        .stats {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            z-index: 10;
-            font-weight: 600;
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        .icon-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.5rem;
-            color: var(--text-color);
-        }
-
-        /* Main Layout */
-        .wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            width: 100vw;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* Background Container for Bars */
-        .chart-container {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            justify-content: space-evenly; /* Evenly spaces the 5 bars */
-            align-items: flex-end; /* Anchors bars to the bottom */
-            z-index: 1; 
-            pointer-events: none; /* Allows clicks to pass through to the buttons */
-        }
-
-        .bar {
-            width: 12%;
-            height: 0; /* Initial state: invisible */
-            background-color: var(--accent-color);
-            opacity: 0.2; /* Subtle look so it stays in the background */
-            border-radius: 15px 15px 0 0;
-            transition: height 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Added a slight "bounce" effect */
-        }
-
-        /* The Card */
-        .card {
-            width: 55%;
-            max-width: 1000px;
-            aspect-ratio: 16 / 9;
-            height: auto;
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        /* Large Text Area (Top 4/5ths) */
-        .content-area {
-            flex: 4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .large-text {
-            font-size: 3rem;
-            font-weight: bold;
-        }
-
-        /* Button Row (Bottom 1/5th) */
-        .button-row {
-            flex: 1;
-            display: flex;
-            justify-content: space-evenly;
-            align-items: center;
-            background-color: rgba(0,0,0,0.03); 
-            border-top: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .card-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            background-color: var(--button-bg);
-            color: var(--text-color);
-            cursor: pointer;
-            transition: transform 0.1s ease;
-        }
-
-        .card-btn:hover {
-            transform: scale(1.05);
-            background-color: var(--accent-color);
-            color: white;
-        }
-
-        @media (max-width: 768px) {
-            .card { width: 90%; height: 70%; }
-            .large-text { font-size: 1.8rem; }
-            .card-btn { padding: 8px 12px; font-size: 0.8rem; }
-            .stats { top: 10px; left: 10px; font-size: 0.8rem; }
-        }
-    </style>
+    <title>Card Interface</title>
+    <link rel="stylesheet" href="card.css">
 </head>
+
 <body data-theme="light">
 
     <div class="stats">
@@ -183,68 +31,17 @@
                 <button class="card-btn">Action 2</button>
                 <button class="card-btn">Action 3</button>
                 <button class="card-btn">Action 4</button>
-                <button class="card-btn">Action 5</button>
             </div>
         </div>
     </div>
 
-    <script>
-    // Theme Toggle Logic
-    const toggle = document.getElementById('theme-toggle');
-    const body = document.body;
-
-    toggle.addEventListener('click', () => {
-        const currentTheme = body.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        body.setAttribute('data-theme', newTheme);
-    });
-
-    // --- NEW: Streak and Bar Logic ---
-    const buttons = document.querySelectorAll('.card-btn');
-    const currentStreakText = document.getElementById('current-streak');
-    const maxStreakText = document.getElementById('max-streak');
-
-    let currentStreak = 0;
-    let maxStreak = 0;
-    
-    // Track heights for 5 bars (0 to 100)
-    let barHeights = [0, 0, 0, 0, 0];
-
-    buttons.forEach((btn, index) => {
-        btn.addEventListener('click', () => {
-            // 1. Update Streaks
-            currentStreak++;
-            if (currentStreak > maxStreak) {
-                maxStreak = currentStreak;
-            }
-
-            // 2. Increase the specific bar's height (by 10% each click)
-            barHeights[index] = Math.min(barHeights[index] + 10, 100);
-
-            // 3. Update the UI
-            updateDisplay();
-        });
-    });
-
-    function updateDisplay() {
-        // Update numbers
-        currentStreakText.innerText = currentStreak;
-        maxStreakText.innerText = maxStreak;
-
-        // Update bar heights in DOM
-        barHeights.forEach((height, i) => {
-            const bar = document.getElementById(`bar-${i}`);
-            bar.style.height = height + '%';
-        });
-    }
-</script>
-
     <div class="chart-container">
-    <div class="bar" id="bar-0"></div>
-    <div class="bar" id="bar-1"></div>
-    <div class="bar" id="bar-2"></div>
-    <div class="bar" id="bar-3"></div>
-    <div class="bar" id="bar-4"></div>
-</div>
+        <div class="bar" id="bar-0"></div>
+        <div class="bar" id="bar-1"></div>
+        <div class="bar" id="bar-2"></div>
+        <div class="bar" id="bar-3"></div>
+    </div>
+
+    <script src="card.js"></script>
 </body>
 </html>
