@@ -1,37 +1,70 @@
-// Theme Toggle Logic
-const toggle = document.getElementById('theme-toggle');
+// 1. SELECT ELEMENTS
 const body = document.body;
+const themeToggle = document.getElementById('theme-toggle');
+const cardInner = document.getElementById('card-inner');
+const buttons = document.querySelectorAll('.card-btn');
+const currentStreakText = document.getElementById('current-streak');
+const maxStreakText = document.getElementById('max-streak');
 
-toggle.addEventListener('click', () => {
+// 2. STATE
+let currentStreak = 0;
+let maxStreak = 0;
+let barHeights = [0, 0, 0, 0];
+
+// 3. THEME LOGIC
+themeToggle.addEventListener('click', () => {
     const currentTheme = body.getAttribute('data-theme');
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
     body.setAttribute('data-theme', newTheme);
 });
 
-// Streak and Bar Logic
-const buttons = document.querySelectorAll('.card-btn');
-const currentStreakText = document.getElementById('current-streak');
-const maxStreakText = document.getElementById('max-streak');
+// 4. FLIP LOGIC
+function flipCard() {
+    if (cardInner) {
+        cardInner.classList.toggle('is-flipped');
+    }
+}
 
-let currentStreak = 0;
-let maxStreak = 0;
+// Spacebar Trigger
+window.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') {
+        e.preventDefault(); 
+        flipCard();
+    }
+});
 
-// Track heights for 4 bars
-let barHeights = [0, 0, 0, 0];
+// Side Click Trigger
+cardInner.addEventListener('click', (e) => {
+    // Stop flip if a button was clicked
+    if (e.target.closest('.card-btn')) return;
 
+    const rect = cardInner.getBoundingClientRect();
+    const x = e.clientX - rect.left; 
+    const cardWidth = rect.width;
+
+    if (x < cardWidth * 0.2 || x > cardWidth * 0.8) {
+        flipCard();
+    }
+});
+
+// 5. STREAK & BAR LOGIC
 buttons.forEach((btn, index) => {
     btn.addEventListener('click', () => {
-
-        // Update streaks
+        /*
+        // Increment streak 
         currentStreak++;
         if (currentStreak > maxStreak) {
             maxStreak = currentStreak;
         }
+        */
 
         // Increase corresponding bar
         barHeights[index] = Math.min(barHeights[index] + 10, 100);
 
         updateDisplay();
+        
+        // Auto-flip back to front after picking an answer
+        setTimeout(flipCard, 200); 
     });
 });
 
