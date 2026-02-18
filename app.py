@@ -8,7 +8,7 @@ app = Flask(__name__)
 # Home page, includes profiles, settings, and navigation to other sections 
 @app.route('/')
 def index():
-    return render_template('login.html') # Not yet implemented, but this is where users would log in
+    return render_template('login.html') 
 
 # For HTML generation testing, to be removed later
 random_words = [
