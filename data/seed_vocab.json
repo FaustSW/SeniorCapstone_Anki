@@ -1,0 +1,60 @@
+[
+  { "term": "ser", "english_gloss": "to be", "intro_index": 1 },
+  { "term": "persona", "english_gloss": "person", "intro_index": 2 },
+  { "term": "tener", "english_gloss": "to have", "intro_index": 3 },
+  { "term": "casa", "english_gloss": "house", "intro_index": 4 },
+  { "term": "hacer", "english_gloss": "to do / make", "intro_index": 5 },
+  { "term": "día", "english_gloss": "day", "intro_index": 6 },
+  { "term": "estar", "english_gloss": "to be (state)", "intro_index": 7 },
+  { "term": "vida", "english_gloss": "life", "intro_index": 8 },
+  { "term": "ir", "english_gloss": "to go", "intro_index": 9 },
+  { "term": "trabajo", "english_gloss": "work", "intro_index": 10 },
+
+  { "term": "bueno", "english_gloss": "good", "intro_index": 11 },
+  { "term": "malo", "english_gloss": "bad", "intro_index": 12 },
+  { "term": "grande", "english_gloss": "big", "intro_index": 13 },
+  { "term": "nuevo", "english_gloss": "new", "intro_index": 14 },
+  { "term": "tiempo", "english_gloss": "time", "intro_index": 15 },
+
+  { "term": "ver", "english_gloss": "to see", "intro_index": 16 },
+  { "term": "mundo", "english_gloss": "world", "intro_index": 17 },
+  { "term": "dar", "english_gloss": "to give", "intro_index": 18 },
+  { "term": "mano", "english_gloss": "hand", "intro_index": 19 },
+  { "term": "decir", "english_gloss": "to say", "intro_index": 20 },
+
+  { "term": "querer", "english_gloss": "to want", "intro_index": 21 },
+  { "term": "año", "english_gloss": "year", "intro_index": 22 },
+  { "term": "pensar", "english_gloss": "to think", "intro_index": 23 },
+  { "term": "momento", "english_gloss": "moment", "intro_index": 24 },
+  { "term": "poder", "english_gloss": "to be able to", "intro_index": 25 },
+
+  { "term": "yo", "english_gloss": "I", "intro_index": 26 },
+  { "term": "tú", "english_gloss": "you (informal)", "intro_index": 27 },
+  { "term": "él", "english_gloss": "he", "intro_index": 28 },
+  { "term": "ella", "english_gloss": "she", "intro_index": 29 },
+  { "term": "nosotros", "english_gloss": "we", "intro_index": 30 },
+
+  { "term": "mejor", "english_gloss": "better", "intro_index": 31 },
+  { "term": "otro", "english_gloss": "other", "intro_index": 32 },
+  { "term": "mismo", "english_gloss": "same", "intro_index": 33 },
+  { "term": "siempre", "english_gloss": "always", "intro_index": 34 },
+  { "term": "nunca", "english_gloss": "never", "intro_index": 35 },
+
+  { "term": "hablar", "english_gloss": "to speak", "intro_index": 36 },
+  { "term": "llegar", "english_gloss": "to arrive", "intro_index": 37 },
+  { "term": "volver", "english_gloss": "to return", "intro_index": 38 },
+  { "term": "salir", "english_gloss": "to leave", "intro_index": 39 },
+  { "term": "tomar", "english_gloss": "to take", "intro_index": 40 },
+
+  { "term": "hombre", "english_gloss": "man", "intro_index": 41 },
+  { "term": "mujer", "english_gloss": "woman", "intro_index": 42 },
+  { "term": "niño", "english_gloss": "child", "intro_index": 43 },
+  { "term": "amigo", "english_gloss": "friend", "intro_index": 44 },
+  { "term": "comida", "english_gloss": "food", "intro_index": 45 },
+
+  { "term": "feliz", "english_gloss": "happy", "intro_index": 46 },
+  { "term": "triste", "english_gloss": "sad", "intro_index": 47 },
+  { "term": "importante", "english_gloss": "important", "intro_index": 48 },
+  { "term": "ahora", "english_gloss": "now", "intro_index": 49 },
+  { "term": "aquí", "english_gloss": "here", "intro_index": 50 }
+]
