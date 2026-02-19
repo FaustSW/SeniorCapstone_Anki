@@ -1,15 +1,15 @@
 """
 Database Initialization Script
 
-Creates the SQLite database file (data/app.db) and initializes all tables
-defined in the models package.
+Initializes the SQLite database and creates all tables defined in app.models.
+
+This script is intentionally thin. Database configuration and engine creation
+live in app/db.py and must not be duplicated here.
 
 Responsibilities:
-- Ensure the data/ directory exists.
-- Create the database if it does not already exist.
-- Create all required tables (User, Vocab, Card, ReviewLog).
+- Ensure the database directory exists if the DB file is under a folder (e.g. data/).
+- Call app.db.init_db() to create all required tables.
 - Be safe to run multiple times without duplicating tables.
 
-This script is intended to be run once during initial project setup,
-or whenever a fresh database is needed.
+Intended for initial setup and for resetting to a fresh database during development.
 """
