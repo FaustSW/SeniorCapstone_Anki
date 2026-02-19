@@ -123,7 +123,7 @@
                     alert(`Successfully logged in as ${selectedProfile.name}!`);
                 }, 500);
 
-                fetch('/card', {
+                fetch('/go_to_review', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
@@ -131,7 +131,7 @@
                 })
                 .then(response => {
                     if (response.ok) {
-                        window.location.href = '/card';
+                        window.location.href = '/go_to_review';
                     } else {
                         showMessage('Error navigating to card page', 'error');
                     }

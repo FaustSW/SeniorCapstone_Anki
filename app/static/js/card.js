@@ -85,7 +85,7 @@ document.querySelectorAll('.card-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const action = btn.dataset.action;
 
-        fetch('/handle_card_response', {
+        fetch(HANDLE_CARD_URL, {  
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: action })
