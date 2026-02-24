@@ -14,5 +14,32 @@ app.register_blueprint(review_bp, url_prefix='/review') # Register the review bl
 app.register_blueprint(stats_bp, url_prefix='/stats') # Register the stats blueprint
 
 
+# Simple API endpoints
+@app.route('/api/health')
+def api_health():
+    return jsonify({"status": "ok"})
+
+
+@app.route('/api/review/next')
+def api_review_next():
+    return jsonify({
+        "card_id": 1,
+        "spanish": "hola",
+        "english": "hello"
+    })
+
+
+@app.route('/api/review/<int:card_id>', methods=['POST'])
+def api_review_grade(card_id):
+    data = request.get_json()
+    rating = data.get("rating", 2)
+
+    return jsonify({
+        "card_id": card_id,
+        "rating": rating,
+        "message": "Review saved (demo stub)",
+        "next_due_days": 3
+    })
+
 if __name__ == '__main__':
     app.run(debug=True)
