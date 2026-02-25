@@ -1,18 +1,55 @@
 """
-Database configuration and session helpers.
+db.py
 
-This module is the single source of truth for all database connectivity:
-- DB_URL (where the SQLite .db file lives)
-- the shared SQLModel engine
-- creating Sessions
-- initializing tables (create_all)
+Single source of truth for database connectivity.
 
-All runtime code (blueprints, services) and setup scripts (init_db, seed_db)
-must import engine/session helpers from here.
+Three things live here:
+    engine      — the shared SQLModel engine (connects to SQLite)
+    get_session — returns a new database session
+    init_db     — creates all tables
 
-Do not call create_engine() anywhere else in the codebase.
-Keeping DB configuration centralized prevents inconsistent DB paths and
-ensures everyone is reading/writing the same SQLite file.
+Everything that touches the database (blueprints, services, scripts)
+imports from here. Do not call create_engine() anywhere else.
 """
 
+from sqlmodel import SQLModel, create_engine, Session
+
 DB_URL = "sqlite:///./data/app.db"
+
+engine = create_engine(DB_URL, echo=True)
+
+
+def get_session():
+    """
+    Return a new database session.
+
+    Caller is responsible for committing and closing.
+
+    Usage:
+        session = get_session()
+        try:
+            session.add(some_record)
+            session.commit()
+        finally:
+            session.close()
+    """
+    return Session(engine)
+
+
+def init_db():
+    """
+    Create all tables defined by SQLModel subclasses.
+
+    Models must be imported before calling create_all so that
+    SQLModel registers their table definitions in metadata.
+    Safe to call multiple times — existing tables are not recreated.
+    """
+    # These imports look unused, but they're required.
+    # SQLModel only knows about a table if the model class has been
+    # imported into Python's memory. Without these, create_all
+    # silently creates zero tables. Don't remove them.
+    import app.models.card   # noqa: F401 – registers "cards" table
+    import app.models.user   # noqa: F401 – registers "user" table
+    import app.models.vocab  # noqa: F401 – registers "vocab" table
+
+    SQLModel.metadata.create_all(engine)
