@@ -1,15 +1,22 @@
 """
-Database Initialization Script
+init_db.py
 
-Initializes the SQLite database and creates all tables defined in app.models.
+Creates all database tables. Safe to run multiple times as
+existing tables won't be duplicated.
 
-This script is intentionally thin. Database configuration and engine creation
-live in app/db.py and must not be duplicated here.
-
-Responsibilities:
-- Ensure the database directory exists if the DB file is under a folder (e.g. data/).
-- Call app.db.init_db() to create all required tables.
-- Be safe to run multiple times without duplicating tables.
-
-Intended for initial setup and for resetting to a fresh database during development.
+Usage:
+    python -m scripts.init_db
 """
+
+import os
+import sys
+
+# Add project root to path so "from app..." imports work
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from app.db import init_db
+
+if __name__ == "__main__":
+    os.makedirs("data", exist_ok=True)
+    init_db()
+    print("Database tables created.")
