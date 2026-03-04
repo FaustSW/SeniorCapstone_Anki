@@ -48,8 +48,9 @@ def init_db():
     # SQLModel only knows about a table if the model class has been
     # imported into Python's memory. Without these, create_all
     # silently creates zero tables. Don't remove them.
-    import app.models.card   # noqa: F401 – registers "cards" table
-    import app.models.user   # noqa: F401 – registers "user" table
-    import app.models.vocab  # noqa: F401 – registers "vocab" table
+    import app.models.card         # noqa: F401 – registers "cards" table
+    import app.models.user         # noqa: F401 – registers "user" table
+    import app.models.vocab        # noqa: F401 – registers "vocab" table
+    import app.models.review_log   # noqa: F401 – registers "review_log" table
 
     SQLModel.metadata.create_all(engine)
