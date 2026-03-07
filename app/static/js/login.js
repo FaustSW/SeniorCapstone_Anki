@@ -3,10 +3,10 @@
         /* ============================================================================================================== */
         
         let profiles = [
-            { id: 1, name: 'John Doe', username: 'john_doe', password: 'password123', avatar: 'avatar-1', initials: 'JD' },
-            { id: 2, name: 'Jane Smith', username: 'jane_smith', password: 'secure456', avatar: 'avatar-2', initials: 'JS' },
-            { id: 3, name: 'Admin', username: 'admin', password: 'admin789', avatar: 'avatar-3', initials: 'AD' },
-            { id: 4, name: 'Demo User', username: 'demo_user', password: 'demo2024', avatar: 'avatar-4', initials: 'DU' }
+            { id: 1, name: 'John Doe', username: 'john_doe', password: '123', avatar: 'avatar-1', initials: 'JD' },
+            { id: 2, name: 'Jane Smith', username: 'jane_smith', password: '123', avatar: 'avatar-2', initials: 'JS' },
+            { id: 3, name: 'Admin', username: 'admin', password: '123', avatar: 'avatar-3', initials: 'AD' },
+            { id: 4, name: 'Demo User', username: 'demo_user', password: '123', avatar: 'avatar-4', initials: 'DU' }
         ];
 
         let selectedProfile = null;

@@ -36,7 +36,7 @@ def generate_cards():
     selected_words = random.choice(random_words) # Simulate card generation with random words
     selected_words2 = random.choice(random_words) # Simulate card generation with random words
     # This will be the main interface for reviewing cards
-    return render_template('card.html', main_text_placeholder=selected_words, back_text_placeholder=selected_words2) 
+    return render_template('review.html', main_text_placeholder=selected_words, back_text_placeholder=selected_words2) 
 
 @review_bp.route('/handle_card_response', methods=['POST'])
 def handle_card_response():

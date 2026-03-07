@@ -1,53 +1,24 @@
-from flask import Flask, render_template, request, jsonify
-from app.blueprints.login.auth import auth_bp   # Import the authentication blueprint
-from app.blueprints.review.review import review_bp # Import the review blueprint
-from themes import themes, DEFAULT_THEME # Import themes and default theme
-from app.blueprints.stats.stats import stats_bp # Import the stats blueprint
-from app.blueprints.base.api import api_bp # Import the API blueprint
-
-# from core_logic import AnkiGenerator # Assuming this is your main class/function
+from flask import Flask, jsonify
+from app.blueprints.auth import auth_bp
+from app.blueprints.review import review_bp
+from app.blueprints.stats import stats_bp
+from app.blueprints.themes import themes_bp
 
 app = Flask(__name__,
             template_folder="app/templates",
             static_folder="app/static")
 
-app.register_blueprint(auth_bp)  # Register the authentication blueprint
-app.register_blueprint(review_bp, url_prefix='/review') # Register the review blueprint
-app.register_blueprint(stats_bp, url_prefix='/stats') # Register the stats blueprint
-app.register_blueprint(api_bp) # Register the API blueprint
+app.secret_key = 'dev-secret-key-change-in-production'  # Required for sessions/flash
+
+app.register_blueprint(auth_bp)
+app.register_blueprint(review_bp, url_prefix='/review')
+app.register_blueprint(stats_bp, url_prefix='/stats')
+app.register_blueprint(themes_bp)
 
 
-# ============================================================================================================== 
-# THEME ROUTES - For theme switching functionality
-# ============================================================================================================== 
-
-# Route to get all available themes
-@app.route('/api/themes', methods=['GET'])
-def get_themes():
-    theme_list = []
-    for theme_key, theme_data in themes.items():
-        theme_list.append({
-            'id': theme_key,
-            'name': theme_data['name']
-        })
-    return jsonify(theme_list)
-
-# Route to get specific theme colors
-@app.route('/api/theme/<theme_id>', methods=['GET'])
-def get_theme(theme_id):
-    if theme_id in themes:
-        return jsonify(themes[theme_id])
-    return jsonify({'error': 'Theme not found'}), 404
-
-# Route to save user's theme preference
-@app.route('/api/save-theme', methods=['POST'])
-def save_theme():
-    data = request.json
-    theme_id = data.get('theme_id')
-    
-    if theme_id in themes:
-        return jsonify({'success': True, 'theme': theme_id})
-    return jsonify({'success': False, 'error': 'Invalid theme'}), 400
+@app.route('/api/health')
+def health():
+    return jsonify({"status": "ok"})
 
 
 if __name__ == '__main__':

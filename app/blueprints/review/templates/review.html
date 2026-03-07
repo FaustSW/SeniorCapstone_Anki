@@ -14,6 +14,16 @@
     <div>Max Streak: <span id="max-streak">0</span></div>
 </div>
 
+<!-- Progress Bar (segmented by rating) -->
+<div class="progress-container">
+    <div class="progress-bar-segmented">
+        <div class="progress-segment segment-again" id="segment-again"></div>
+        <div class="progress-segment segment-hard" id="segment-hard"></div>
+        <div class="progress-segment segment-good" id="segment-good"></div>
+        <div class="progress-segment segment-easy" id="segment-easy"></div>
+    </div>
+</div>
+<div class="progress-text"><span id="cards-reviewed">0</span> / <span id="total-cards">20</span> cards reviewed</div>
 
 <!-- Flashcards wrapper -->
 <div class="wrapper">
@@ -40,42 +50,21 @@
                     </div>
                 </div>
                 <div class="button-row">
-                    <div class="btn-wrapper">
-                        <span class="btn-label">< 1m</span>
-                        <button class="card-btn" data-action="again">Again</button>
-                    </div>
-                    <div class="btn-wrapper">
-                        <span class="btn-label">< 6m</span>
-                        <button class="card-btn" data-action="hard">Hard</button>
-                    </div>
-                    <div class="btn-wrapper">
-                        <span class="btn-label">< 10m</span>
-                        <button class="card-btn" data-action="good">Good</button>
-                    </div>
-                    <div class="btn-wrapper">
-                        <span class="btn-label">5d</span>
-                        <button class="card-btn" data-action="easy">Easy</button>
-                    </div>
+                    <button class="card-btn again" data-action="again">Again</button>
+                    <button class="card-btn hard" data-action="hard">Hard</button>
+                    <button class="card-btn good" data-action="good">Good</button>
+                    <button class="card-btn easy" data-action="easy">Easy</button>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
 
-<!-- Chart -->
-<div class="chart-container">
-    <div class="bar" id="bar-0"></div>
-    <div class="bar" id="bar-1"></div>
-    <div class="bar" id="bar-2"></div>
-    <div class="bar" id="bar-3"></div>
-</div>
-
-{% endblock %}
-
-{% block extra_js %}
 <script>
     const HANDLE_CARD_URL = "{{ url_for('review.handle_card_response') }}";
 </script>
+{% endblock %}
+
+{% block extra_js %}
 <script src="{{ url_for('static', filename='js/card.js') }}"></script>
 {% endblock %}
