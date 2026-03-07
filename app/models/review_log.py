@@ -41,9 +41,9 @@ class ReviewLog(SQLModel, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True)
 
-    user_id: int = Field(foreign_key="user.id", index=True)
-    card_id: int = Field(foreign_key="cards.id", index=True)
-    vocab_id: int = Field(foreign_key="vocab.id", index=True)
+    user_id:         int = Field(foreign_key="user.id",          index=True)
+    review_state_id: int = Field(foreign_key="review_state.id",  index=True)  # was card_id
+    vocab_id:        int = Field(foreign_key="vocab.id",         index=True)
 
     rating: int  # 1=Again, 2=Hard, 3=Good, 4=Easy
 

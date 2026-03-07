@@ -1,0 +1,47 @@
+"""
+Database Model: ReviewState
+
+Persistent scheduler state for a (user, vocab) pair.
+
+This is the source of truth for SM-2 scheduling. It lives as long
+as the user is studying that vocab item and survives card regeneration.
+
+Relationships:
+    User        → many ReviewState  (one per vocab item being studied)
+    Vocab       → many ReviewState  (one per user studying it)
+    ReviewState → many GeneratedCard
+    ReviewState.current_generated_card_id → active GeneratedCard (nullable)
+"""
+
+from __future__ import annotations
+
+from datetime import datetime, timezone
+from typing import Optional
+
+from sqlmodel import SQLModel, Field
+
+
+class ReviewState(SQLModel, table=True):
+
+    __tablename__ = "review_state"
+
+    id:      Optional[int] = Field(default=None, primary_key=True)
+    user_id: int           = Field(foreign_key="user.id",  index=True)
+    vocab_id: int          = Field(foreign_key="vocab.id", index=True)
+
+    # SM-2 scheduling fields (owned by scheduler_adapter)
+    scheduler_state: int            = Field(default=1)
+    learning_step:   int            = Field(default=0)
+    ease_factor:     float          = Field(default=2.5)
+    interval:        int            = Field(default=0)
+    due_date:        Optional[datetime] = Field(default=None, index=True)
+
+    # App-owned counters (owned by review_service)
+    repetitions:     int = Field(default=0)
+    lapses:          int = Field(default=0)
+    success_streak:  int = Field(default=0)
+
+    # Points to the currently active GeneratedCard (nullable until first generation)
+    current_generated_card_id: Optional[int] = Field(default=None)
+    # Note: not a FK yet — avoids circular dependency with GeneratedCard.
+    # Wire as a proper FK once GeneratedCard is fully implemented.

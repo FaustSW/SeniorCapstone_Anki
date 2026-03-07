@@ -26,7 +26,7 @@ from anki_sm_2 import (
 )
 
 # Adjust if your project layout differs
-from models.card import Card
+from app.models.review_state import ReviewState
 
 
 class SchedulerAdapter:
@@ -60,7 +60,7 @@ class SchedulerAdapter:
     # Public API
     # ------------------------------------------------------------------
 
-    def initialize_new_card(self, card: Card) -> Card:
+    def initialize_new_card(self, card: ReviewState) -> ReviewState:
         """
         Populate a Card's scheduling fields with initial SM-2 state.
 
@@ -73,7 +73,7 @@ class SchedulerAdapter:
         self._write_sm2_to_card(sm2_card, card)
         return card
 
-    def apply_review(self, card: Card, rating: int) -> Card:
+    def apply_review(self, card: ReviewState, rating: int) -> ReviewState:
         """
         Run a review through the SM-2 scheduler and update the Card.
 
@@ -99,7 +99,7 @@ class SchedulerAdapter:
     # Translation helpers
     # ------------------------------------------------------------------
 
-    def _read_card_to_sm2(self, card: Card) -> SM2Card:
+    def _read_card_to_sm2(self, card: ReviewState) -> SM2Card:
         """Card model -> SM2Card object."""
         return SM2Card(
             state=SM2State(card.scheduler_state or 1),
@@ -109,7 +109,7 @@ class SchedulerAdapter:
             current_interval=card.interval,
         )
 
-    def _write_sm2_to_card(self, sm2_card: SM2Card, card: Card) -> None:
+    def _write_sm2_to_card(self, sm2_card: SM2Card, card: ReviewState) -> None:
         """
         SM2Card -> Card model scheduling fields (mutates in place).
 
@@ -132,6 +132,8 @@ class SchedulerAdapter:
         datetime leaks in from the DB or tests, this prevents
         silent miscalculation of intervals and due dates.
         """
+        if dt is None:
+            return datetime.now(timezone.utc)
         if dt.tzinfo is None:
             return dt.replace(tzinfo=timezone.utc)
         return dt.astimezone(timezone.utc)
