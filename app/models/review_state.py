@@ -31,7 +31,7 @@ class ReviewState(SQLModel, table=True):
 
     # SM-2 scheduling fields (owned by scheduler_adapter)
     scheduler_state: int            = Field(default=1)
-    learning_step:   int            = Field(default=0)
+    learning_step:   Optional[int]  = Field(default=0)
     ease_factor:     float          = Field(default=2.5)
     interval:        int            = Field(default=0)
     due_date:        Optional[datetime] = Field(default=None, index=True)

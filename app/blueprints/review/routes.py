@@ -3,70 +3,56 @@ Review Blueprint
 
 Handles the interactive learning experience.
 
-Role:
-- Display the next review card.
-- Accept and forward user rating submissions.
-- Connect user actions to the review workflow in the service layer.
-
-This blueprint represents the core study loop of the application.
+Routes:
+    GET  /review/     — load first due card and render the review page
+    POST /review/rate — process a rating, return next card as JSON
 """
-from flask import Blueprint, render_template, request, jsonify
-import random
+from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for
+
+from app.services.review_service import get_next_card, process_review
 
 review_bp = Blueprint('review', __name__, template_folder='templates')
-# Review page, where you view cards and mark them as known/unknown
 
-# For HTML generation testing, to be removed later
-random_words = [
-    "Ephemeral", "Komorebi", "Fernweh", "Taciturno", "Bibliothèque",
-    "Sempiternal", "Saudade", "Schadenfreude", "Murciélago", "Tsundoku",
-    "Labyrinth", "Petrichor", "Ziggurat", "Querencia", "Hiraeth",
-    "Oubliette", "Waldeinsamkeit", "Mellifluous", "Ikigai", "Gula",
-    "Vellichor", "Inmarcesible", "Chiaroscuro", "Kintsugi", "L’appel du vide",
-    "Serendipity", "Doppelgänger", "Sobremesa", "Ukiyo", "Ethereal",
-    "Flâneur", "Wanderlust", "Ataraxia", "Pamplemousse", "Nadir",
-    "Cachivache", "Kenshō", "Bruma", "Sonder", "Torschlusspanik",
-    "Susurrus", "Mono no aware", "Dépaysement", "Heimat", "Ojala",
-    "Ineffable", "Yūgen", "Cafuné", "Gezellig", "Glück"
-]
 
-# Review page, where you view cards and mark them as known/unknown
 @review_bp.route('/', methods=['GET'])
 def generate_cards():
-    selected_words = random.choice(random_words) # Simulate card generation with random words
-    selected_words2 = random.choice(random_words) # Simulate card generation with random words
-    # This will be the main interface for reviewing cards
-    return render_template('review.html', main_text_placeholder=selected_words, back_text_placeholder=selected_words2) 
+    """Load the review page with the first due card."""
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('auth.index'))
 
-@review_bp.route('/handle_card_response', methods=['POST'])
-def handle_card_response():
-    data = request.get_json()
-    response = data.get('action')
-    # Here you would process the user's response and update your spaced repetition algorithm
-    print(f"User marked the card as: {response}")
-    return jsonify({"status": "success"})
+    card = get_next_card(user_id)
 
-# ------------------------
-# Review API stub endpoints
-# ------------------------
-
-@review_bp.get("/api/next")
-def api_review_next():
-    return jsonify({
-        "card_id": 1,
-        "spanish": "hola",
-        "english": "hello"
-    })
+    return render_template(
+        'review.html',
+        card=card,  # None if nothing is due
+    )
 
 
-@review_bp.post("/api/<int:card_id>")
-def api_review_grade(card_id):
+@review_bp.route('/rate', methods=['POST'])
+def rate_card():
+    """Process a rating and return the next card as JSON."""
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+
     data = request.get_json(force=True)
-    rating = data.get("rating", 2)
+    review_state_id = data.get('review_state_id')
+    rating = data.get('rating')
+
+    if review_state_id is None or rating is None:
+        return jsonify({"error": "review_state_id and rating are required"}), 400
+
+    try:
+        rating = int(rating)
+        result = process_review(user_id, int(review_state_id), rating)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+    # Get the next card for the user
+    next_card = get_next_card(user_id)
 
     return jsonify({
-        "card_id": card_id,
-        "rating": rating,
-        "message": "Review saved (demo stub)",
-        "next_due_days": 3
+        "result": result,
+        "next_card": next_card,  # None if no more cards due
     })
