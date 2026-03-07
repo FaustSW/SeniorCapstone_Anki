@@ -125,10 +125,12 @@ body {
 .content-area {
     flex: 4;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 20px;
     text-align: center;
+    gap: 12px;
 }
 
 .large-text {
@@ -195,6 +197,15 @@ button:hover {
     cursor: pointer;
     font-size: 1.5rem;
     color: var(--text-color);
+}
+
+.sentence-text {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-style: normal;
+    max-width: 80%;
+    line-height: 1.5;
 }
 
 /* ==========================================================================

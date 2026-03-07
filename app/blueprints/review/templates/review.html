@@ -37,6 +37,11 @@
                     <div class="large-text" id="front-text">
                         {{ card.term }}
                     </div>
+                    {% if card.sentence %}
+                    <div class="sentence-text" id="front-sentence">
+                        {{ card.sentence }}
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="button-row">
                     <div class="btn-label">Press Space or Click Sides to Flip</div>
@@ -49,6 +54,11 @@
                     <div class="large-text" id="back-text">
                         {{ card.english_gloss }}
                     </div>
+                    {% if card.translation %}
+                    <div class="sentence-text" id="back-translation">
+                        {{ card.translation }}
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="button-row">
                     <button class="card-btn again" data-action="1">Again</button>

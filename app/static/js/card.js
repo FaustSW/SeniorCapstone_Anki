@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const cardInner = document.getElementById('card-inner');
     const frontText = document.getElementById('front-text');
     const backText = document.getElementById('back-text');
+    const frontSentence = document.getElementById('front-sentence');
+    const backTranslation = document.getElementById('back-translation');
     const buttons = document.querySelectorAll('.card-btn');
     const currentStreakText = document.getElementById('current-streak');
     const maxStreakText = document.getElementById('max-streak');
@@ -94,6 +96,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     setTimeout(() => {
                         frontText.textContent = data.next_card.term;
                         backText.textContent = data.next_card.english_gloss;
+
+                        // Update sentence / translation
+                        if (frontSentence) {
+                            frontSentence.textContent = data.next_card.sentence || '';
+                            frontSentence.style.display = data.next_card.sentence ? '' : 'none';
+                        }
+                        if (backTranslation) {
+                            backTranslation.textContent = data.next_card.translation || '';
+                            backTranslation.style.display = data.next_card.translation ? '' : 'none';
+                        }
+
                         reviewStateId = data.next_card.review_state_id;
                         isFlipping = false;
                     }, 400);  // wait for flip animation

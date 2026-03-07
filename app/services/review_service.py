@@ -32,6 +32,7 @@ from app.db import get_session
 from app.models.review_state import ReviewState
 from app.models.vocab import Vocab
 from app.models.review_log import ReviewLog
+from app.models.generated_card import GeneratedCard
 from app.services.scheduler_adapter import SchedulerAdapter
 
 
@@ -54,9 +55,9 @@ def get_next_card(user_id: int) -> Optional[dict]:
             "vocab_id": int,
             "term": str,
             "english_gloss": str,
-            "sentence": str or None,       # populated by generation_service (future)
-            "translation": str or None,    # populated by generation_service (future)
-            "audio_path": str or None,     # populated by generation_service (future)
+            "sentence": str or None,
+            "translation": str or None,
+            "audio_path": str or None,
         }
     """
     session = get_session()
@@ -68,14 +69,26 @@ def get_next_card(user_id: int) -> Optional[dict]:
 
         vocab = session.get(Vocab, review_state.vocab_id)
 
+        # Pull from the active GeneratedCard if one exists
+        sentence = None
+        translation = None
+        audio_path = None
+
+        if review_state.current_generated_card_id is not None:
+            gc = session.get(GeneratedCard, review_state.current_generated_card_id)
+            if gc is not None:
+                sentence = gc.sentence
+                translation = gc.translation
+                audio_path = gc.tts_audio_path
+
         return {
             "review_state_id": review_state.id,
             "vocab_id": review_state.vocab_id,
             "term": vocab.term,
             "english_gloss": vocab.english_gloss,
-            "sentence": None,
-            "translation": None,
-            "audio_path": None,
+            "sentence": sentence,
+            "translation": translation,
+            "audio_path": audio_path,
         }
     finally:
         session.close()
