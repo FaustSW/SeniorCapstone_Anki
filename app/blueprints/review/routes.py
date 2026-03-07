@@ -10,6 +10,7 @@ Routes:
 from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for
 
 from app.services.review_service import get_next_card, process_review
+from app.services.stats_service import get_session_stats
 
 review_bp = Blueprint('review', __name__, template_folder='templates')
 
@@ -22,10 +23,12 @@ def generate_cards():
         return redirect(url_for('auth.index'))
 
     card = get_next_card(user_id)
+    stats = get_session_stats(user_id)
 
     return render_template(
         'review.html',
-        card=card,  # None if nothing is due
+        card=card,
+        stats=stats,
     )
 
 
@@ -49,10 +52,12 @@ def rate_card():
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
 
-    # Get the next card for the user
+    # Get the next card and updated stats
     next_card = get_next_card(user_id)
+    stats = get_session_stats(user_id)
 
     return jsonify({
         "result": result,
-        "next_card": next_card,  # None if no more cards due
+        "next_card": next_card,
+        "stats": stats,
     })

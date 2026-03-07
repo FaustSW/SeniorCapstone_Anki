@@ -15,16 +15,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const maxStreakText = document.getElementById('max-streak');
 
     // ======================================================================
-    // 2. STATE
+    // 2. STATE — initialize from server-provided stats
     // ======================================================================
+    const initial = (typeof INITIAL_STATS !== 'undefined') ? INITIAL_STATS : {};
     let reviewStateId = typeof CURRENT_REVIEW_STATE_ID !== 'undefined' ? CURRENT_REVIEW_STATE_ID : null;
-    let currentStreak = 0;
-    let maxStreak = 0;
-    let totalReviewed = 0;
-    let reviewCounts = { again: 0, hard: 0, good: 0, easy: 0 };
-    let isFlipping = false;  // prevent double-clicks during animation
+    let currentStreak = initial.current_streak || 0;
+    let maxStreak = initial.max_streak || 0;
+    let totalReviewed = initial.total_reviewed || 0;
+    let reviewCounts = {
+        again: (initial.counts && initial.counts.again) || 0,
+        hard:  (initial.counts && initial.counts.hard)  || 0,
+        good:  (initial.counts && initial.counts.good)  || 0,
+        easy:  (initial.counts && initial.counts.easy)  || 0,
+    };
+    let isFlipping = false;
 
     const RATING_NAMES = { 1: 'again', 2: 'hard', 3: 'good', 4: 'easy' };
+
+    // Render initial stats on page load
+    updateProgressBar();
+    if (currentStreakText) currentStreakText.innerText = currentStreak;
+    if (maxStreakText) maxStreakText.innerText = maxStreak;
 
     // ======================================================================
     // 3. FLIP LOGIC
@@ -65,13 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
             isFlipping = true;
 
             const rating = parseInt(btn.dataset.action);
-            const ratingName = RATING_NAMES[rating];
-
-            // Update local counters
-            reviewCounts[ratingName]++;
-            totalReviewed++;
-            updateProgressBar();
-            updateStreaks(ratingName);
 
             // POST rating to backend
             fetch(RATE_URL, {
@@ -90,14 +94,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
+                // Sync stats from server (source of truth)
+                if (data.stats) {
+                    syncStats(data.stats);
+                }
+
                 if (data.next_card) {
-                    // Flip to front, then swap content
                     flipToFront();
                     setTimeout(() => {
                         frontText.textContent = data.next_card.term;
                         backText.textContent = data.next_card.english_gloss;
 
-                        // Update sentence / translation
                         if (frontSentence) {
                             frontSentence.textContent = data.next_card.sentence || '';
                             frontSentence.style.display = data.next_card.sentence ? '' : 'none';
@@ -109,15 +116,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         reviewStateId = data.next_card.review_state_id;
                         isFlipping = false;
-                    }, 400);  // wait for flip animation
+                    }, 400);
                 } else {
-                    // No more cards due
                     flipToFront();
                     setTimeout(() => {
                         frontText.textContent = '🎉 Done!';
                         backText.textContent = 'No more cards due.';
+                        if (frontSentence) frontSentence.style.display = 'none';
+                        if (backTranslation) backTranslation.style.display = 'none';
                         reviewStateId = null;
-                        // Disable buttons
                         buttons.forEach(b => b.disabled = true);
                         isFlipping = false;
                     }, 400);
@@ -131,7 +138,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ======================================================================
-    // 5. PROGRESS BAR
+    // 5. SYNC STATS FROM SERVER
+    // ======================================================================
+    function syncStats(stats) {
+        totalReviewed = stats.total_reviewed || 0;
+        currentStreak = stats.current_streak || 0;
+        maxStreak = stats.max_streak || 0;
+        reviewCounts = {
+            again: (stats.counts && stats.counts.again) || 0,
+            hard:  (stats.counts && stats.counts.hard)  || 0,
+            good:  (stats.counts && stats.counts.good)  || 0,
+            easy:  (stats.counts && stats.counts.easy)  || 0,
+        };
+
+        if (currentStreakText) currentStreakText.innerText = currentStreak;
+        if (maxStreakText) maxStreakText.innerText = maxStreak;
+        updateProgressBar();
+    }
+
+    // ======================================================================
+    // 6. PROGRESS BAR
     // ======================================================================
     function updateProgressBar() {
         const total = Math.max(totalReviewed, 1);
@@ -148,19 +174,5 @@ document.addEventListener('DOMContentLoaded', () => {
         if (segEasy) segEasy.style.width = (reviewCounts.easy / total) * 100 + '%';
         if (cardsReviewed) cardsReviewed.innerText = totalReviewed;
         if (totalCards) totalCards.innerText = totalReviewed;
-    }
-
-    // ======================================================================
-    // 6. STREAKS
-    // ======================================================================
-    function updateStreaks(action) {
-        if (action === 'good' || action === 'easy') {
-            currentStreak++;
-            if (currentStreak > maxStreak) maxStreak = currentStreak;
-        } else {
-            currentStreak = 0;
-        }
-        if (currentStreakText) currentStreakText.innerText = currentStreak;
-        if (maxStreakText) maxStreakText.innerText = maxStreak;
     }
 });

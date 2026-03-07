@@ -85,6 +85,18 @@
 <script>
     const RATE_URL = "{{ url_for('review.rate_card') }}";
     const CURRENT_REVIEW_STATE_ID = {{ card.review_state_id if card else 'null' }};
+    const INITIAL_STATS = {
+        total_reviewed: {{ stats.total_reviewed if stats else 0 }},
+        counts: {
+            again: {{ stats.counts.again if stats else 0 }},
+            hard: {{ stats.counts.hard if stats else 0 }},
+            good: {{ stats.counts.good if stats else 0 }},
+            easy: {{ stats.counts.easy if stats else 0 }}
+        },
+        current_streak: {{ stats.current_streak if stats else 0 }},
+        max_streak: {{ stats.max_streak if stats else 0 }},
+        cards_due: {{ stats.cards_due if stats else 0 }}
+    };
 </script>
 <script src="{{ url_for('static', filename='js/card.js') }}"></script>
 {% endblock %}
